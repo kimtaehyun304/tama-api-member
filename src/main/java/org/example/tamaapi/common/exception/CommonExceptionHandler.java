@@ -1,19 +1,11 @@
 package org.example.tamaapi.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 import org.example.tamaapi.dto.responseDto.SimpleResponse;
 
 import org.hibernate.exception.ConstraintViolationException;
-=======
 
-import org.example.tamaapi.dto.responseDto.review.SimpleResponse;
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
-=======
-
-import org.example.tamaapi.dto.responseDto.review.SimpleResponse;
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,22 +44,13 @@ public class CommonExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleResponse("데이터 저장 실패"));
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<SimpleResponse> ConstraintViolationException() {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleResponse("데이터 저장 실패"));
     }
 
-    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ResponseEntity<SimpleResponse> SQLIntegrityConstraintViolationException() {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleResponse("저장 실패"));
-    }
 
-=======
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
-=======
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
     /* 스프링이 처리 못해서 try-catch 필요
     @ExceptionHandler(IOException.class)
     public ResponseEntity<SimpleResponse> IOException(IOException exception) {
@@ -113,21 +96,13 @@ public class CommonExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new SimpleResponse("존재하지 않는 API 입니다"));
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
+
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<SimpleResponse> SQLIntegrityConstraintViolationException() {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleResponse("저장 실패"));
     }
 
 
-<<<<<<< HEAD
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
-=======
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
     @ExceptionHandler(MyExpiredJwtException.class)
     public ResponseEntity<SimpleResponse> MyExpiredJwtException(MyExpiredJwtException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleResponse(exception.getMessage()));

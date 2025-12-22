@@ -1,21 +1,15 @@
 package org.example.tamaapi.dto.feign;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.example.tamaapi.domain.Gender;
 import org.example.tamaapi.domain.user.Authority;
 import org.example.tamaapi.domain.user.Member;
-import org.example.tamaapi.domain.user.MemberAddress;
 import org.example.tamaapi.domain.user.Provider;
-import org.example.tamaapi.dto.responseDto.member.MemberAddressesResponse;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class MemberFeignResponse {
+public class MemberResponse {
 
     private String email;
 
@@ -35,7 +29,7 @@ public class MemberFeignResponse {
 
     private Authority authority;
 
-    public MemberFeignResponse(Member member) {
+    public MemberResponse(Member member) {
         this.email = member.getEmail();
         this.phone = member.getPhone();
         this.nickname = member.getNickname();

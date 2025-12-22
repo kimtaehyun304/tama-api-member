@@ -4,21 +4,16 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.tamaapi.command.CacheService;
 import org.example.tamaapi.common.cache.MyCacheType;
-import org.example.tamaapi.common.auth.CustomPrincipal;
-import org.example.tamaapi.domain.user.Authority;
 import org.example.tamaapi.dto.requestDto.member.EmailRequest;
 import org.example.tamaapi.dto.requestDto.member.MyTokenRequest;
 import org.example.tamaapi.dto.responseDto.AccessTokenResponse;
-import org.example.tamaapi.dto.responseDto.IsAdminResponse;
 import org.example.tamaapi.dto.responseDto.SimpleResponse;
 
 import org.example.tamaapi.query.MemberQueryRepository;
 import org.example.tamaapi.command.EmailService;
-import org.example.tamaapi.common.util.ErrorMessageUtil;
 import org.example.tamaapi.common.util.RandomStringGenerator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 

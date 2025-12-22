@@ -5,14 +5,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
+
 import feign.RequestInterceptor;
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
-=======
+
 import feign.RequestInterceptor;
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
+
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,18 +55,11 @@ public class AppConfig {
         return new JPAQueryFactory(em);
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
+
     @Bean
     public RequestInterceptor requestLoggingInterceptor() {
         return template -> log.info("[Feign Request] method={}, url={}, query={}, header={} , body={}",
                 template.method(), template.url(), template.queryLine(), template.headers(), (template.body() != null) ? new String(template.body()) : "null");
     }
-<<<<<<< HEAD
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
-=======
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
+
 }

@@ -3,16 +3,9 @@ package org.example.tamaapi.common.auth.jwt;
 
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
-import org.example.tamaapi.common.auth.CustomPrincipal;
-<<<<<<< HEAD
-<<<<<<< HEAD
-import org.example.tamaapi.domain.user.Member;
-=======
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
-=======
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
 import org.example.tamaapi.common.exception.MyExpiredJwtException;
 import org.example.tamaapi.common.exception.OrderFailException;
+import org.example.tamaapi.domain.user.Member;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -20,16 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.Date;
 
-import static org.example.tamaapi.common.auth.jwt.TokenExtractor.TOKEN_PREFIX;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
-=======
-
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
 @Service
 @RequiredArgsConstructor
 public class TokenProvider {
@@ -40,9 +24,6 @@ public class TokenProvider {
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
 
-
-<<<<<<< HEAD
-<<<<<<< HEAD
     public String generateToken(Member member) {
         Date now = new Date();
         return makeToken(member, new Date(now.getTime() + ACCESS_TOKEN_DURATION.toMillis()));
@@ -60,11 +41,6 @@ public class TokenProvider {
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                 .compact();
     }
-
-=======
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
-=======
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
@@ -85,25 +61,14 @@ public class TokenProvider {
 
         try {
             Long memberId = Long.valueOf(claims.getSubject());
-            CustomPrincipal customPrincipal = new CustomPrincipal(TOKEN_PREFIX + " " + token, memberId, null);
-            return new UsernamePasswordAuthenticationToken(customPrincipal, token);
+            return new UsernamePasswordAuthenticationToken(memberId, token);
         } catch (Exception e){
             throw new OrderFailException("memberId 누락");
         }
-<<<<<<< HEAD
-<<<<<<< HEAD
 
     }
 
 
-=======
-    }
-
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
-=======
-    }
-
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
     private Claims getClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(jwtProperties.getSecretKey())

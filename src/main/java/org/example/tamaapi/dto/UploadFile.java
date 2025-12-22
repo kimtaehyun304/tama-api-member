@@ -8,14 +8,8 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Embeddable
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 @ToString
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
-=======
-@ToString
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
+
 public class UploadFile {
 
     @Column(nullable = false)

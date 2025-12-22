@@ -18,22 +18,10 @@ public abstract class BaseEntity {
     //테스트 데이터 만들때 이전 시간이 필요해서 직접 널어도 덮어씌우길래
     //@CreatedDate, @LastModifiedDate 제거
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-=======
-=======
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
-<<<<<<< HEAD
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
-=======
->>>>>>> b5c94cf684565bcfb12724553ffc7966857c3c69
     private LocalDateTime updatedAt;
 
     @PrePersist

@@ -1,24 +1,15 @@
 package org.example.tamaapi.command;
 
 import lombok.RequiredArgsConstructor;
-import org.example.tamaapi.common.auth.CustomPrincipal;
 import org.example.tamaapi.common.exception.OrderFailException;
 import org.example.tamaapi.domain.user.Member;
 import org.example.tamaapi.domain.user.coupon.MemberCoupon;
 import org.example.tamaapi.dto.feign.UsedCouponAndPointRequest;
-import org.example.tamaapi.feignClient.item.ItemFeignClient;
-import org.example.tamaapi.feignClient.item.ItemTotalPriceRequest;
-import org.example.tamaapi.feignClient.order.OrderFeignClient;
-import org.example.tamaapi.feignClient.order.OrderResponse;
-import org.example.tamaapi.feignClient.order.ItemOrderCountResponse;
 import org.example.tamaapi.query.MemberQueryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.example.tamaapi.common.util.ErrorMessageUtil.NOT_FOUND_COUPON;
 import static org.example.tamaapi.common.util.ErrorMessageUtil.NOT_FOUND_MEMBER;
@@ -32,13 +23,12 @@ public class CouponService {
     private final MemberRepository memberRepository;
     private final MemberCouponRepository memberCouponRepository;
 
-    public void useCouponAndPoint(UsedCouponAndPointRequest request, CustomPrincipal principal){
+    public void useCouponAndPoint(UsedCouponAndPointRequest request, Long memberId){
         Long memberCouponId = request.getMemberCouponId();
         int usedCouponPrice = request.getUsedCouponPrice();
         int usedPoint = request.getUsedPoint();
         int rewardPoint = request.getRewardPoint();
         int orderItemsPrice = request.getOrderItemsPrice();
-        Long memberId = principal.getMemberId();
         validatePoint(usedPoint, memberId);
         MemberCoupon memberCoupon = null;
 
@@ -61,11 +51,11 @@ public class CouponService {
         member.plusPoint(rewardPoint);
     }
 
-    public void rollbackCouponAndPoint(UsedCouponAndPointRequest request, CustomPrincipal principal){
+    public void rollbackCouponAndPoint(UsedCouponAndPointRequest request, Long memberId){
         Long memberCouponId = request.getMemberCouponId();
         //사용한 쿠폰 롤백
         if (memberCouponId != null) {
-            MemberCoupon memberCoupon = memberCouponRepository.findByIdAndMemberId(memberCouponId, principal.getMemberId())
+            MemberCoupon memberCoupon = memberCouponRepository.findByIdAndMemberId(memberCouponId, memberId)
                     .orElseThrow(() -> new OrderFailException(NOT_FOUND_COUPON));
             memberCoupon.changeIsUsed(false);
         }
@@ -74,7 +64,7 @@ public class CouponService {
         int rewardPoint = request.getRewardPoint();
 
         //포인트 로직 준비
-        Member member = memberRepository.findById(principal.getMemberId())
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new OrderFailException(NOT_FOUND_MEMBER));
 
         //사용한 포인트 롤백
