@@ -36,10 +36,12 @@ public class FeignApiController {
         couponService.useCouponAndPoint(usedCouponAndPointRequest, memberId);
     }
 
+    /*  관리자가 주문 취소할 때 필요 (아직 기능 미구현이라)
     @PutMapping("/api/member/discount/rollback")
     public void rollbackCouponAndPoint(@RequestBody UsedCouponAndPointRequest usedCouponAndPointRequest, @AuthenticationPrincipal Long memberId){
         couponService.rollbackCouponAndPoint(usedCouponAndPointRequest, memberId);
     }
+     */
 
     @GetMapping("/api/member/authority")
     public Authority findAuthority(@AuthenticationPrincipal Long memberId){
@@ -48,6 +50,7 @@ public class FeignApiController {
     }
 
     //---읽기 msa 동기화---
+    //kafka payload에 jwt 심으면 부하 있을 것 같아서 memberId 사용
     @GetMapping("/api/member/{memberId}")
     public MemberResponse findMember(@PathVariable Long memberId){
         Member member = memberQueryRepository.findById(memberId)

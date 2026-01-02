@@ -35,14 +35,14 @@ public class CouponService {
         //쿠폰 사용 처리
         if (memberCouponId != null) {
             memberCoupon = memberCouponRepository.findById(memberCouponId)
-                    .orElseThrow(() -> new OrderFailException(NOT_FOUND_COUPON));
+                    .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_COUPON));
             validateCoupon(memberCoupon, memberId, usedCouponPrice, orderItemsPrice);
             memberCoupon.changeIsUsed(true);
         }
 
         //포인트 로직 준비
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new OrderFailException(NOT_FOUND_MEMBER));
+                .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_MEMBER));
 
         //사용한 포인트 차감
         member.minusPoint(usedPoint);
@@ -56,7 +56,7 @@ public class CouponService {
         //사용한 쿠폰 롤백
         if (memberCouponId != null) {
             MemberCoupon memberCoupon = memberCouponRepository.findByIdAndMemberId(memberCouponId, memberId)
-                    .orElseThrow(() -> new OrderFailException(NOT_FOUND_COUPON));
+                    .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_COUPON));
             memberCoupon.changeIsUsed(false);
         }
 
@@ -65,7 +65,7 @@ public class CouponService {
 
         //포인트 로직 준비
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new OrderFailException(NOT_FOUND_MEMBER));
+                .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_MEMBER));
 
         //사용한 포인트 롤백
         member.plusPoint(usedPoint);
@@ -76,26 +76,26 @@ public class CouponService {
 
     private void validatePoint(int usedPoint, Long memberId) {
         Member member = memberQueryRepository.findById(memberId)
-                .orElseThrow(() -> new OrderFailException(NOT_FOUND_MEMBER));
+                .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_MEMBER));
 
         int serverPoint = member.getPoint();
 
         if (usedPoint > serverPoint)
-            throw new OrderFailException("보유한 포인트보다 넘게 사용할 수 없습니다");
+            throw new IllegalArgumentException("보유한 포인트보다 넘게 사용할 수 없습니다");
     }
 
     private void validateCoupon(MemberCoupon memberCoupon, Long memberId, int couponPrice, int orderItemsPrice) {
         if(!memberCoupon.getMember().getId().equals(memberId))
-            throw new OrderFailException("보유하지 안은 쿠폰을 사용했습니다.");
+            throw new IllegalArgumentException("보유하지 않은 쿠폰을 사용했습니다.");
 
         if (memberCoupon.getCoupon().getExpiresAt().isBefore(LocalDate.now()))
-            throw new OrderFailException("쿠폰 유효기간 만료");
+            throw new IllegalArgumentException("쿠폰 유효기간 만료");
 
         if(memberCoupon.isUsed())
-            throw new OrderFailException("이미 사용한 쿠폰입니다.");
+            throw new IllegalArgumentException("이미 사용한 쿠폰입니다.");
 
         if(couponPrice > orderItemsPrice)
-            throw new OrderFailException("쿠폰 금액은 주문 가격보다 넘게 사용할 수 없습니다.");
+            throw new IllegalArgumentException("쿠폰 금액은 주문 가격보다 넘게 사용할 수 없습니다.");
     }
 
 }
