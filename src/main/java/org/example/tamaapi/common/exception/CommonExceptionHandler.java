@@ -26,6 +26,11 @@ import java.sql.SQLIntegrityConstraintViolationException;
 //필터에서 발생한 예외는 못잡음
 public class CommonExceptionHandler {
 
+    @SuppressWarnings("unchecked")
+    public static <T extends Throwable> void throwOriginalException(Throwable t) throws T {
+        throw (T) t;
+    }
+
     //런타임 에러 포함한 기타 예외
     @ExceptionHandler(Exception.class)
     public ResponseEntity<SimpleResponse> Exception(Exception exception) {

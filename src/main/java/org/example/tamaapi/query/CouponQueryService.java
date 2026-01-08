@@ -32,8 +32,7 @@ public class CouponQueryService {
             case PERCENT_DISCOUNT -> (int) Math.round(orderItemsPrice * (discountValue / 100.0));
         };
 
-        //조회말고 저장할때 검증하면 됨 (데이터가 필요할수도 있으니 유연하게 가자)
-        //validateCoupon(memberCoupon, couponPrice, orderItemsPrice);
+        //validateCoupon은 조회말고 저장할 때
 
         return couponPrice;
     }

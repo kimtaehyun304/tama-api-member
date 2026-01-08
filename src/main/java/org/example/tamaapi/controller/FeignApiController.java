@@ -32,7 +32,7 @@ public class FeignApiController {
     }
 
     @PutMapping("/api/member/discount/use")
-    public void useCouponAndPoint(@RequestBody UsedCouponAndPointRequest usedCouponAndPointRequest, @AuthenticationPrincipal Long memberId){
+    public void useCouponAndPoint(@RequestBody UsedCouponAndPointRequest usedCouponAndPointRequest, @AuthenticationPrincipal Long memberId) throws InterruptedException {
         couponService.useCouponAndPoint(usedCouponAndPointRequest, memberId);
     }
 

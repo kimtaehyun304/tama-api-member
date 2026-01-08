@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 
-@FeignClient(name = "order-service", url = "http://localhost:5001")
+@FeignClient(name = "order-service", url = "http://localhost:5001"
+        , configuration = OrderFeignClient.class
+        , fallbackFactory = OrderFallbackFactory.class)
 public interface OrderFeignClient {
 
     @GetMapping("/api/orders/{orderId}/item")
