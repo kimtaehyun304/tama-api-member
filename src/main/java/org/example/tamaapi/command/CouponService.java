@@ -1,7 +1,9 @@
 package org.example.tamaapi.command;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.example.tamaapi.common.exception.OrderFailException;
+import org.example.tamaapi.common.exception.feign.RefusedDiscountException;
+import org.example.tamaapi.domain.DiscountLog;
 import org.example.tamaapi.domain.user.Member;
 import org.example.tamaapi.domain.user.coupon.MemberCoupon;
 import org.example.tamaapi.dto.feign.UsedCouponAndPointRequest;
@@ -22,13 +24,17 @@ public class CouponService {
     private final MemberQueryRepository memberQueryRepository;
     private final MemberRepository memberRepository;
     private final MemberCouponRepository memberCouponRepository;
+    private final DiscountLogRepository discountLogRepository;
+    private final EntityManager em;
 
-    public void useCouponAndPoint(UsedCouponAndPointRequest request, Long memberId){
+    //+로그 테이블 저장
+    public void useCouponAndPoint(UsedCouponAndPointRequest request){
         Long memberCouponId = request.getMemberCouponId();
         int usedCouponPrice = request.getUsedCouponPrice();
         int usedPoint = request.getUsedPoint();
         int rewardPoint = request.getRewardPoint();
         int orderItemsPrice = request.getOrderItemsPrice();
+        Long memberId = request.getMemberId();
         validatePoint(usedPoint, memberId);
         MemberCoupon memberCoupon = null;
 
@@ -44,15 +50,14 @@ public class CouponService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_MEMBER));
 
-        //사용한 포인트 차감
-        member.minusPoint(usedPoint);
+        member.changePoint(rewardPoint-usedPoint);
 
-        //포인트 적립
-        member.plusPoint(rewardPoint);
+        discountLogRepository.save(new DiscountLog(request.getPaymentId()));
     }
 
-    public void rollbackCouponAndPoint(UsedCouponAndPointRequest request, Long memberId){
-        Long memberCouponId = request.getMemberCouponId();
+
+
+    public void rollbackCouponAndPoint(Long memberCouponId, Integer usedPoint, Integer rewardPoint, Long memberId){
         //사용한 쿠폰 롤백
         if (memberCouponId != null) {
             MemberCoupon memberCoupon = memberCouponRepository.findByIdAndMemberId(memberCouponId, memberId)
@@ -60,42 +65,48 @@ public class CouponService {
             memberCoupon.changeIsUsed(false);
         }
 
-        int usedPoint = request.getUsedPoint();
-        int rewardPoint = request.getRewardPoint();
-
         //포인트 로직 준비
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_MEMBER));
 
-        //사용한 포인트 롤백
-        member.plusPoint(usedPoint);
-
-        //적립한 포인트 롤백
-        member.minusPoint(rewardPoint);
+        //사용한 포인트 원복, 적립 포인트 원복
+        member.changePoint(usedPoint-rewardPoint);
     }
 
+
+    //없는 데이터 조회하는경우 보안을 위해 일반 예외로해서 예외 메시지 감춤
     private void validatePoint(int usedPoint, Long memberId) {
         Member member = memberQueryRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_MEMBER));
 
         int serverPoint = member.getPoint();
 
+
         if (usedPoint > serverPoint)
-            throw new IllegalArgumentException("보유한 포인트보다 넘게 사용할 수 없습니다");
+            throw new RefusedDiscountException("보유한 포인트보다 넘게 사용할 수 없습니다");
     }
 
     private void validateCoupon(MemberCoupon memberCoupon, Long memberId, int couponPrice, int orderItemsPrice) {
         if(!memberCoupon.getMember().getId().equals(memberId))
-            throw new IllegalArgumentException("보유하지 않은 쿠폰을 사용했습니다.");
+            throw new RefusedDiscountException("보유하지 않은 쿠폰을 사용했습니다.");
 
         if (memberCoupon.getCoupon().getExpiresAt().isBefore(LocalDate.now()))
-            throw new IllegalArgumentException("쿠폰 유효기간 만료");
+            throw new RefusedDiscountException("쿠폰 유효기간 만료");
 
         if(memberCoupon.isUsed())
-            throw new IllegalArgumentException("이미 사용한 쿠폰입니다.");
+            throw new RefusedDiscountException("이미 사용한 쿠폰입니다.");
 
         if(couponPrice > orderItemsPrice)
-            throw new IllegalArgumentException("쿠폰 금액은 주문 가격보다 넘게 사용할 수 없습니다.");
+            throw new RefusedDiscountException("쿠폰 금액은 주문 가격보다 넘게 사용할 수 없습니다.");
+    }
+
+    public void deleteDiscountLog(String paymentId){
+        int deletedRow = em.createQuery("delete DiscountLog d where d.paymentId = :paymentId")
+                .setParameter("paymentId", paymentId)
+                .executeUpdate();
+
+        if(deletedRow == 0)
+            throw new IllegalArgumentException("로그 삭제 실패");
     }
 
 }

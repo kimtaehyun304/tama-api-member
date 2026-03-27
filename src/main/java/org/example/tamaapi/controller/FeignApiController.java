@@ -2,7 +2,9 @@ package org.example.tamaapi.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.tamaapi.command.CouponService;
+import org.example.tamaapi.command.DiscountLogRepository;
 import org.example.tamaapi.common.aspect.InternalOnly;
+import org.example.tamaapi.common.exception.feign.RefusedDiscountException;
 import org.example.tamaapi.common.util.ErrorMessageUtil;
 import org.example.tamaapi.domain.user.Authority;
 import org.example.tamaapi.domain.user.Member;
@@ -24,6 +26,7 @@ public class FeignApiController {
     private final CouponQueryService couponQueryService;
     private final CouponService couponService;
     private final MemberQueryRepository memberQueryRepository;
+    private final DiscountLogRepository discountLogRepository;
 
     //쿠폰 소유한 멤버만 보는게 이상적이지만. 안해도 보안 위험 없을 것 같은데
     @GetMapping("/api/member/coupon/{memberCouponId}/price")
@@ -32,8 +35,8 @@ public class FeignApiController {
     }
 
     @PutMapping("/api/member/discount/use")
-    public void useCouponAndPoint(@RequestBody UsedCouponAndPointRequest usedCouponAndPointRequest, @AuthenticationPrincipal Long memberId) throws InterruptedException {
-        couponService.useCouponAndPoint(usedCouponAndPointRequest, memberId);
+    public void useCouponAndPoint(@RequestBody UsedCouponAndPointRequest usedCouponAndPointRequest) throws InterruptedException {
+        couponService.useCouponAndPoint(usedCouponAndPointRequest);
     }
 
     /*  관리자가 주문 취소할 때 필요 (아직 기능 미구현이라)
@@ -56,6 +59,11 @@ public class FeignApiController {
         Member member = memberQueryRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException(ErrorMessageUtil.NOT_FOUND_MEMBER));
         return new MemberResponse(member);
+    }
+
+    @GetMapping("/api/member/discount/log")
+    boolean existDisCountLog(@RequestParam String paymentId){
+        return discountLogRepository.existsByPaymentId(paymentId);
     }
 
 }

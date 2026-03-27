@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.tamaapi.domain.BaseEntity;
 import org.example.tamaapi.domain.Gender;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
 public class Member extends BaseEntity {
 
     @Id
@@ -87,6 +89,12 @@ public class Member extends BaseEntity {
         this.height = height;
         this.weight = weight;
     }
+
+    public void changePoint(int point){
+        this.point += point;
+    }
+
+
     public void plusPoint(int point){
         this.point += point;
     }

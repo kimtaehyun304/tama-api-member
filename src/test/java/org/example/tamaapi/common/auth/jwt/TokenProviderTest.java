@@ -25,7 +25,7 @@ class TokenProviderTest {
     //테스트할때 하드코딩된 jwt 필요해서 알아내려고
     @Test
     void generateToken() {
-        String token = tokenProvider.generateToken(new Member(2L));
+        String token = tokenProvider.generateTestToken(new Member(3L));
         System.out.println("token = " + token);
     }
 }

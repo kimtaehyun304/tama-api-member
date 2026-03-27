@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "item-service", url = "http://localhost:5002"
+@FeignClient(name = "item-service", url = "http://localhost:5003"
         , configuration = ItemFeignClientConfig.class
         , fallbackFactory = ItemFallbackFactory.class)
 public interface ItemFeignClient {

@@ -2,6 +2,8 @@ package org.example.tamaapi.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.example.tamaapi.common.exception.feign.RefusedDiscountException;
+import org.example.tamaapi.dto.SimpleFeignResponse;
 import org.example.tamaapi.dto.responseDto.SimpleResponse;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -123,14 +125,14 @@ public class CommonExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new SimpleResponse(exception.getMessage()));
     }
 
-    @ExceptionHandler(NotEnoughStockException.class)
-    public ResponseEntity<SimpleResponse> NotEnoughStockException(NotEnoughStockException exception) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new SimpleResponse(exception.getMessage()));
-    }
-
     @ExceptionHandler(OrderFailException.class)
     public ResponseEntity<SimpleResponse> OrderCancelException(OrderFailException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleResponse(exception.getMessage()));
+    }
+
+    @ExceptionHandler(RefusedDiscountException.class)
+    public ResponseEntity<SimpleFeignResponse> RefusedDiscountException(RefusedDiscountException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleFeignResponse(exception.getCode(), exception.getMessage()));
     }
 
 }
