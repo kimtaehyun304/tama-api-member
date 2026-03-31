@@ -12,6 +12,7 @@ import org.example.tamaapi.dto.feign.MemberResponse;
 import org.example.tamaapi.dto.feign.UsedCouponAndPointRequest;
 
 import org.example.tamaapi.query.CouponQueryService;
+import org.example.tamaapi.query.DiscountLogQueryRepository;
 import org.example.tamaapi.query.MemberQueryRepository;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class FeignApiController {
     private final CouponQueryService couponQueryService;
     private final CouponService couponService;
     private final MemberQueryRepository memberQueryRepository;
-    private final DiscountLogRepository discountLogRepository;
+    private final DiscountLogQueryRepository discountLogQueryRepository;
 
     //쿠폰 소유한 멤버만 보는게 이상적이지만. 안해도 보안 위험 없을 것 같은데
     @GetMapping("/api/member/coupon/{memberCouponId}/price")
@@ -63,7 +64,7 @@ public class FeignApiController {
 
     @GetMapping("/api/member/discount/log")
     boolean existDisCountLog(@RequestParam String paymentId){
-        return discountLogRepository.existsByPaymentId(paymentId);
+        return discountLogQueryRepository.existsByPaymentId(paymentId);
     }
 
 }

@@ -7,11 +7,13 @@ import org.example.tamaapi.domain.DiscountLog;
 import org.example.tamaapi.domain.user.Member;
 import org.example.tamaapi.domain.user.coupon.MemberCoupon;
 import org.example.tamaapi.dto.feign.UsedCouponAndPointRequest;
+import org.example.tamaapi.dto.feign.requestDto.ItemOrderCountRequest;
 import org.example.tamaapi.query.MemberQueryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.example.tamaapi.common.util.ErrorMessageUtil.NOT_FOUND_COUPON;
 import static org.example.tamaapi.common.util.ErrorMessageUtil.NOT_FOUND_MEMBER;
@@ -35,6 +37,8 @@ public class CouponService {
         int rewardPoint = request.getRewardPoint();
         int orderItemsPrice = request.getOrderItemsPrice();
         Long memberId = request.getMemberId();
+        String paymentId = request.getPaymentId();
+
         validatePoint(usedPoint, memberId);
         MemberCoupon memberCoupon = null;
 
@@ -52,9 +56,8 @@ public class CouponService {
 
         member.changePoint(rewardPoint-usedPoint);
 
-        discountLogRepository.save(new DiscountLog(request.getPaymentId()));
+        discountLogRepository.save(new DiscountLog(paymentId, memberId, memberCouponId, usedPoint, rewardPoint));
     }
-
 
 
     public void rollbackCouponAndPoint(Long memberCouponId, Integer usedPoint, Integer rewardPoint, Long memberId){
@@ -103,6 +106,26 @@ public class CouponService {
     public void deleteDiscountLog(String paymentId){
         int deletedRow = em.createQuery("delete DiscountLog d where d.paymentId = :paymentId")
                 .setParameter("paymentId", paymentId)
+                .executeUpdate();
+
+        if(deletedRow == 0)
+            throw new IllegalArgumentException("로그 삭제 실패");
+    }
+
+
+    //트랜잭션 묶으려고 합침
+    public void rollbackDiscountAndDeleteLog(Long memberCouponId, Integer usedPoint, Integer rewardPoint, Long memberId, String paymentId){
+        rollbackCouponAndPoint(memberCouponId, usedPoint, rewardPoint, memberId);
+        deleteDiscountLog(paymentId);
+    }
+
+    public void deleteDiscountLogInPaymentIds(List<String> paymentIds){
+        //주문 없으면 비었을수도 있음
+        if (paymentIds.isEmpty())
+            return;
+
+        int deletedRow = em.createQuery("delete DiscountLog d where d.paymentId in :paymentIds")
+                .setParameter("paymentIds", paymentIds)
                 .executeUpdate();
 
         if(deletedRow == 0)

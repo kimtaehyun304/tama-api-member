@@ -19,16 +19,20 @@ public class DiscountLog extends BaseEntity {
 
     private String paymentId;
 
-    //private Long memberId;
+    private Long memberId;
 
-    /*
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "json")
-    private JsonNode payload;
-     */
+    private Long memberCouponId;
 
-    public DiscountLog(String paymentId) {
+    private Integer usedPoint;
+
+    private Integer rewardPoint;
+
+
+    public DiscountLog(String paymentId, Long memberId, Long memberCouponId, Integer usedPoint, Integer rewardPoint) {
         this.paymentId = paymentId;
+        this.memberId = memberId;
+        this.memberCouponId = memberCouponId;
+        this.usedPoint = usedPoint;
+        this.rewardPoint = rewardPoint;
     }
-
 }

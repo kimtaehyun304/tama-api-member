@@ -28,16 +28,11 @@ public class MemberEventConsumer {
             backoff = @Backoff(delay = 3000, multiplier = 2)
     )
     @KafkaListener(topics = MEMBER_TOPIC, groupId = "member_consumer_group")
-    //retry + ack 인데 왜 되지? order msa에선 안됐는데
-    @Transactional
     public void consumeRollbackCouponAndPointEvent(RollbackCouponAndPointEvent event, Acknowledgment ack) {
         //재고 차감 → 쿠폰 적용 → 주문 저장 순이라, order 저장 전이라 order 조회 불가하여 zero payload 불가
-        System.out.println("event = " + event);
         //할인 적용 안 됐는데 타임아웃만 난 경우도 있어서 체크헤야함
-        if(discountLogRepository.existsByPaymentId(event.getPaymentId())) {
-            couponService.rollbackCouponAndPoint(event.getMemberCouponId(), event.getUsedPoint(), event.getRewardPoint(), event.getMemberId());
-            couponService.deleteDiscountLog(event.getPaymentId());
-        }
+        if(discountLogRepository.existsByPaymentId(event.getPaymentId()))
+            couponService.rollbackDiscountAndDeleteLog(event.getMemberCouponId(), event.getUsedPoint(), event.getRewardPoint(), event.getMemberId(), event.getPaymentId());
         ack.acknowledge();
     }
 

@@ -24,4 +24,10 @@ public class OrderFallback implements OrderFeignClient {
         throwOriginalException(cause);
         return null;
     }
+
+    @Override
+    public List<String> findExistingPaymentIds(List<String> paymentIds) {
+        throwOriginalException(cause);
+        return null;
+    }
 }
