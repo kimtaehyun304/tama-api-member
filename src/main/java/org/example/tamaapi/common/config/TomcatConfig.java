@@ -15,11 +15,12 @@ public class TomcatConfig
         factory.addConnectorCustomizers(connector -> {
             ProtocolHandler handler = connector.getProtocolHandler();
             if (handler instanceof AbstractHttp11Protocol<?> protocol) {
+                /*
                 System.out.println("maxConnections = " + protocol.getMaxConnections());
                 System.out.println("acceptCount = " + protocol.getAcceptCount());
                 System.out.println("protocol.getMinSpareThreads() = " + protocol.getMinSpareThreads());
                 System.out.println("protocol.getMaxThreads() = " + protocol.getMaxThreads());
-
+                 */
             }
         });
     }
