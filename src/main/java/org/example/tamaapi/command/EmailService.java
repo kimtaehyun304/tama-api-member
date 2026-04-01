@@ -20,6 +20,8 @@ public class EmailService {
     private final JavaMailSender javaMailSender;
 
     @Async("emailExecutor")
+    @Retryable(backoff = @Backoff(delay = 3000, multiplier = 2), recover = "recover")
+    //aop라 public
     public void sendSignedUpEmail(String toMailAddr) {
         String subject = "[TAMA] 회원가입 완료 안내";
         String body = String.format("<p>TAMA 쇼핑몰에 오신 것을 환영합니다</p>");
@@ -27,14 +29,13 @@ public class EmailService {
     }
 
     @Async("emailExecutor")
+    @Retryable(backoff = @Backoff(delay = 3000, multiplier = 2), recover = "recover")
     public void sendAuthenticationEmail(String toMailAddr, String authString) {
         String subject = "[TAMA] 회원가입 인증문자 안내";
         String body = String.format("인증문자 : %s <p>본 메일이 생성된 이유는 해당 메일로 인증하려는 시도가 있었기 때문입니다.</p>", authString);
         sendEmail(toMailAddr, subject, body);
     }
 
-    //@Async는 aop 라 여기에 붙이면 내부 호출이라 동작 불가
-    @Retryable(backoff = @Backoff(delay = 3000, multiplier = 2), recover = "recover")
     public void sendEmail(String toMailAddr, String subject, String body) {
         //Retryable 동작을 위헤 일부로 try catch x
         MimeMessagePreparator mimeMessagePreparator = createMimeMessagePreparator(toMailAddr, subject, body);
@@ -51,9 +52,14 @@ public class EmailService {
     }
 
     @Recover
-    //파라미터 안 필요해도 비동기 메서드 파라미터랑 일치 해야 동작
-    public void recover(Exception e, String toMailAddr, String subject, String body) {
-        log.error("[Retry 실패] 메일 발송을 실패했습니다. toMailAddr={}, 원인={}", toMailAddr, e.getMessage());
+    public void recover(Exception e, String toMailAddr) {
+        log.error("[회원가입 이메일 retry 실패] toMailAddr={}, error={}", toMailAddr, e.getMessage());
+    }
+
+    @Recover
+    //파라미터 안 필요해도 Retryable 메서드 파라미터랑 일치 해야 동작
+    public void recover(Exception e, String toMailAddr, String authString) {
+        log.error("[인증 이메일 retry 실패] toMailAddr={}, error={}", toMailAddr, e.getMessage());
     }
 
 }
