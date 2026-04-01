@@ -64,7 +64,7 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
                                         .email(email)
                                         .nickname(name)
                                         .build());
-                                memberEventProducer.produceAsyncMemberCreatedEvent(member.getId());
+                                memberEventProducer.produceMemberCreatedEvent(member.getId());
                             }
                     );
 

@@ -57,11 +57,9 @@ public class Scheduler {
         //최근 주문은 아직 진행 중이라, 재고 차감 단계 까지만 진행된 걸 수 있어서 제외
         LocalDateTime end = LocalDateTime.now().minusMinutes(10);
 
-        //3시간 전 이후 row 조회 == 3시간 이내 row
         List<DiscountLog> logs = discountLogQueryRepository.findByCreatedAtBetween(start, end);
         List<String> paymentIds = logs.stream().map(DiscountLog::getPaymentId).toList();
         Set<String> orderedPaymentIds = new HashSet<>(orderFeignClient.findExistingPaymentIds(paymentIds));
-
         Set<String> orderedSet = new HashSet<>(orderedPaymentIds);
 
         //원래 삭제해야할 로그
@@ -75,11 +73,11 @@ public class Scheduler {
             else deleteLogs.add(log);
         }
 
-        //원래 삭제해야할 로그
+        //주문이 완료된 로그 삭제 (정상적으로 끝난 케이스)
         List<String> orderLogPaymentIds = orderLogs.stream().map(DiscountLog::getPaymentId).toList();
         couponService.deleteDiscountLogInPaymentIds(orderLogPaymentIds);
 
-        //쿠폰 롤백 후 삭제할 로그
+        //쿠폰은 사용했지만 주문 저장 전에, 주문 서버 down 돼서 쿠폰 롤백시키는 케이스
         for (DiscountLog deleteLog : deleteLogs) {
             Long memberCouponId = deleteLog.getMemberCouponId();
             Integer usedPoint = deleteLog.getUsedPoint();

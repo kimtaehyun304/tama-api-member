@@ -58,7 +58,7 @@ public class MemberApiController {
     public ResponseEntity<SimpleResponse> signUp(@Valid @RequestBody SignUpMemberRequest request) {
         Long memberId = memberService.saveMember(request);
         eventPublisher.publishEvent(new SignedUpEvent(memberId));
-        memberEventProducer.produceAsyncMemberCreatedEvent(memberId);
+        memberEventProducer.produceMemberCreatedEvent(memberId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new SimpleResponse("회원가입 성공"));
     }
 
