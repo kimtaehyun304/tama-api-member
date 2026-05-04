@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 public class RollbackCouponAndPointEvent {
 
-    private final EventType eventType = EventType.ROLLBACK_COUPON_AND_POINT;
     private String paymentId;
     private Long memberCouponId;
     private Integer usedPoint;

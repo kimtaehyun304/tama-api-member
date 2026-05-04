@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "order-service", url = "http://localhost:5002"
+//k8s로 바꾸면서 url 옵션 생략
+@FeignClient(name = "order-service"
         , configuration = OrderFeignClientConfig.class
         , fallbackFactory = OrderFallbackFactory.class)
 public interface OrderFeignClient {

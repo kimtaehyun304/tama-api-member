@@ -47,8 +47,8 @@ public class FeignApiController {
     }
      */
 
-    @GetMapping("/api/member/authority")
-    public Authority findAuthority(@AuthenticationPrincipal Long memberId){
+    @GetMapping("/api/member/{memberId}/authority")
+    public Authority findAuthority(@PathVariable Long memberId){
         return memberQueryRepository.findAuthorityById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException(ErrorMessageUtil.NOT_FOUND_MEMBER));
     }
@@ -62,7 +62,7 @@ public class FeignApiController {
         return new MemberResponse(member);
     }
 
-    @GetMapping("/api/member/discount/log")
+    @GetMapping("/api/member/discount/log/exist")
     boolean existDisCountLog(@RequestParam String paymentId){
         return discountLogQueryRepository.existsByPaymentId(paymentId);
     }

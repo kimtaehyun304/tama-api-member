@@ -28,4 +28,10 @@ class TokenProviderTest {
         String token = tokenProvider.generateTestToken(new Member(3L));
         System.out.println("token = " + token);
     }
+
+    @Test
+    void generateAdminToken() {
+        String token = tokenProvider.generateTestToken(new Member(1L));
+        System.out.println("token = " + token);
+    }
 }
