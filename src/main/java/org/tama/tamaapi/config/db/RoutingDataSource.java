@@ -1,0 +1,21 @@
+package org.tama.tamaapi.config.db;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+@Slf4j
+public class RoutingDataSource extends AbstractRoutingDataSource {
+    public static final String DATASOURCE_KEY_MASTER = "master";
+
+    @Override
+    protected Object determineCurrentLookupKey() {
+        Object dataSource = DATASOURCE_KEY_MASTER;
+
+        if (TransactionSynchronizationManager.isCurrentTransactionReadOnly())
+            dataSource = "slave0";
+
+        //log.info("Selected DB: {}", dataSource);
+        return dataSource;
+    }
+}
