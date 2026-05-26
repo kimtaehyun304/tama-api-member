@@ -57,7 +57,13 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 
     //공유 라이브러리
-    implementation 'org.tama:share-lib:0.0.3'
+    implementation 'org.tama:share-lib:0.0.7'
+
+    //monitoring
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'io.micrometer:micrometer-tracing-bridge-otel'
+    implementation 'io.opentelemetry:opentelemetry-exporter-zipkin'
 
     //msa
     implementation 'org.springframework.kafka:spring-kafka'

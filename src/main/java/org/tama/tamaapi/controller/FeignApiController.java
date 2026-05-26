@@ -1,6 +1,7 @@
 package org.tama.tamaapi.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.tama.sharelib.common.aspect.InternalOnly;
 import org.tama.tamaapi.command.CouponService;
 import org.tama.tamaapi.exception.ErrorMessageUtil;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @InternalOnly
+@Slf4j
 public class FeignApiController {
 
 
@@ -34,6 +36,7 @@ public class FeignApiController {
 
     @PutMapping("/api/member/discount/use")
     public void useCouponAndPoint(@RequestBody UsedCouponAndPointRequest usedCouponAndPointRequest) throws InterruptedException {
+        log.info("쿠폰 차감 컨트롤러 시작");
         couponService.useCouponAndPoint(usedCouponAndPointRequest);
     }
 

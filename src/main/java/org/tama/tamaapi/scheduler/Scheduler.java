@@ -46,7 +46,7 @@ public class Scheduler {
     //1시간 주기가 적당한듯 (장애는 흔하지 않으니까)
     //fixedDelay는 앱 시작시에 바로 실행
     @Scheduled(fixedDelay = 1000*60*60, zone = "Asia/Seoul")
-    public void checkAndRollbackStock(){
+    public void checkAndRollbackCoupon(){
         //3시간동안 상품 서버 down 될 가능성 고려 (더 길게 장애나는건 수동으로 처리)
         //토스뱅크는 지연되면 알람오게 하더라
         LocalDateTime start = LocalDateTime.now().minusHours(3);
@@ -61,7 +61,7 @@ public class Scheduler {
         //원래 삭제해야할 로그
         List<DiscountLog> orderLogs = new ArrayList<>();
 
-        //재고 롤백후 삭제할 로그
+        //쿠폰 롤백후 삭제할 로그
         List<DiscountLog> deleteLogs = new ArrayList<>();
 
         for (DiscountLog log : logs) {
